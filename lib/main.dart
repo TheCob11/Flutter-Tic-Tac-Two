@@ -157,6 +157,8 @@ class Status extends TextComponent {
 class Tile extends RectangleComponent with Hoverable, Tappable {
   late TextComponent text;
   late TextPaint textPaint;
+  late ColorEffect hoverEffect;
+  bool hoverIn = false;
   String owner;
   List coords;
   Board board;
@@ -170,6 +172,13 @@ class Tile extends RectangleComponent with Hoverable, Tappable {
             color: owner == "x" ? Colors.red : Colors.blue, fontSize: .07));
     text.textRenderer = textPaint;
     text.center = Vector2(.0375, .075);
+    hoverEffect = ColorEffect(
+      Colors.grey,
+      const Offset(0, 1),
+      EffectController(duration: .2, alternate: true, infinite: true)
+    );
+    hoverEffect.pause();
+    add(hoverEffect);
   }
   @override
   Future<void>? onLoad() {
@@ -180,30 +189,50 @@ class Tile extends RectangleComponent with Hoverable, Tappable {
 
   @override
   bool onTapDown(TapDownInfo info) {
+    hoverEffect.reset();
+    remove(hoverEffect);
     paint.color = Colors.white;
     board.takeTurn(this);
     return true;
   }
   @override
   bool onHoverEnter(PointerHoverInfo info){
-    if(owner=="" && board.winner == "") {
-      paint.color = Colors.grey;
+    hoverIn = true;
+    if(owner==""&&board.winner=="") {
+      hoverEffect.resume();
     }
     return true;
   }
   @override
   bool onHoverLeave(PointerHoverInfo info){
-    paint.color = Colors.white;
+    hoverIn = false;
+    if(owner==""&&board.winner=="") {
+      hoverEffect.resume();
+    }
     return true;
   }
 
   @override
-  void render(Canvas canvas) {
+  void render(Canvas canvas) async{
     text.text = owner;
     textPaint = TextPaint(
         style: TextStyle(
             color: owner == "x" ? Colors.red : Colors.blue, fontSize: .07));
     text.textRenderer = textPaint;
+    if(!hoverEffect.isPaused && (hoverIn?(hoverEffect.controller.progress+.1>=1):(hoverEffect.controller.progress-.1<=0))){
+      hoverEffect.pause();
+      hoverEffect.apply(hoverIn?1:0);
+    }
+    // if(hoverEffect.isPaused){
+    //   paint.color = hoverIn?Colors.grey:Colors.white;
+    // }
+    if(!(owner==""&&board.winner=="")){
+      if(hoverEffect.isMounted) {
+        hoverEffect.reset();
+        remove(hoverEffect);
+      }
+      paint.color = Colors.white;
+    }
     super.render(canvas);
   }
 }
