@@ -75,6 +75,7 @@ class Board extends RectangleComponent {
             size: game.camera.gameSize.x / 3) {
     paint = Paint();
     paint.color = Colors.black;
+    paint.isAntiAlias = false;
     tiles = List.generate(
         3,
         (index) => List.generate(
@@ -166,6 +167,7 @@ class Tile extends RectangleComponent with Hoverable, Tappable {
       : super.square(position: position, size: size) {
     paint = Paint();
     paint.color = Colors.white;
+    paint.isAntiAlias = false;
     text = TextComponent(text: owner);
     textPaint = TextPaint(
         style: TextStyle(
@@ -223,16 +225,14 @@ class Tile extends RectangleComponent with Hoverable, Tappable {
       hoverEffect.pause();
       hoverEffect.apply(hoverIn?1:0);
     }
-    // if(hoverEffect.isPaused){
-    //   paint.color = hoverIn?Colors.grey:Colors.white;
-    // }
     if(!(owner==""&&board.winner=="")){
       if(hoverEffect.isMounted) {
         hoverEffect.reset();
-        remove(hoverEffect);
+        hoverEffect.pause();
       }
       paint.color = Colors.white;
     }
+    canvas.drawRect(Rect.fromCenter(center: Offset(width/2, height/2), width: width, height: height), Paint()..color = Colors.black ..style = PaintingStyle.stroke ..strokeWidth = .002);
     super.render(canvas);
   }
 }
