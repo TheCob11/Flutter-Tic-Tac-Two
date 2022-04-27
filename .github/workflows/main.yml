@@ -41,6 +41,5 @@ jobs:
       - name: Build android
         run: |
           flutter pub get
-          flutter test
           flutter build apk
           flutter build appbundle
