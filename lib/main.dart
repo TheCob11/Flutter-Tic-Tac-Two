@@ -1,9 +1,9 @@
 import 'package:flame/components.dart';
-import 'package:flame/effects.dart';
 import 'package:flame/flame.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
+import 'package:flame_color_toggle/flame_color_toggle.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,7 +27,11 @@ class TicTacToe extends FlameGame with HasHoverables, HasTappables {
     board = Board(this);
     title.center = Vector2(
         camera.gameSize.x / 2 + title.width / 4, camera.gameSize.y / 10);
-    newGameButton = NewGameButton(this, Vector2(camera.gameSize.x / 2 - camera.gameSize.x / 8, camera.gameSize.y / 8), Vector2(camera.gameSize.x / 4, camera.gameSize.y / 14));
+    newGameButton = NewGameButton(
+        this,
+        Vector2(camera.gameSize.x / 2 - camera.gameSize.x / 8,
+            camera.gameSize.y / 8),
+        Vector2(camera.gameSize.x / 4, camera.gameSize.y / 14));
   }
 
   @override
@@ -42,22 +46,42 @@ class TicTacToe extends FlameGame with HasHoverables, HasTappables {
 }
 
 class NewGameButton extends RectangleComponent with Hoverable, Tappable {
-  TextComponent text = TextComponent(text: "New Game", textRenderer: TextPaint(style: const TextStyle(color: Colors.white, fontSize: .04)));
+  TextComponent text = TextComponent(
+      text: "New Game",
+      textRenderer: TextPaint(
+          style: const TextStyle(color: Colors.white, fontSize: .04)));
   TicTacToe game;
-  NewGameButton(this.game, position, size):super(position: position, size: size){
+  late ColorEffectToggle hoverEffect;
+  NewGameButton(this.game, position, size)
+      : super(position: position, size: size) {
     paint = Paint();
     paint.color = Colors.lightBlue;
-    text.center = Vector2(.5+text.width/40, .05);
+    hoverEffect = ColorEffectToggle(
+        Colors.blueAccent.shade700, const Offset(0, 1), .5, this);
+    text.center = Vector2(.5 + text.width / 40, .05);
   }
   @override
   Future<void> onLoad() async {
     add(text);
   }
+
   @override
   bool onTapDown(TapDownInfo info) {
     game.remove(game.board);
     game.board = Board(game);
     game.add(game.board);
+    return true;
+  }
+
+  @override
+  bool onHoverEnter(PointerHoverInfo info) {
+    hoverEffect.toggle();
+    return true;
+  }
+
+  @override
+  bool onHoverLeave(PointerHoverInfo info) {
+    hoverEffect.toggle();
     return true;
   }
 }
@@ -158,8 +182,7 @@ class Status extends TextComponent {
 class Tile extends RectangleComponent with Hoverable, Tappable {
   late TextComponent text;
   late TextPaint textPaint;
-  late ColorEffect hoverEffect;
-  bool hoverIn = false;
+  late ColorEffectToggle hoverEffect;
   String owner;
   List coords;
   Board board;
@@ -174,13 +197,7 @@ class Tile extends RectangleComponent with Hoverable, Tappable {
             color: owner == "x" ? Colors.red : Colors.blue, fontSize: .07));
     text.textRenderer = textPaint;
     text.center = Vector2(.0375, .075);
-    hoverEffect = ColorEffect(
-      Colors.grey,
-      const Offset(0, 1),
-      EffectController(duration: .2, alternate: true, infinite: true)
-    );
-    hoverEffect.pause();
-    add(hoverEffect);
+    hoverEffect = ColorEffectToggle(Colors.grey, const Offset(0, 1), .2, this);
   }
   @override
   Future<void>? onLoad() {
@@ -193,46 +210,46 @@ class Tile extends RectangleComponent with Hoverable, Tappable {
   bool onTapDown(TapDownInfo info) {
     hoverEffect.reset();
     remove(hoverEffect);
-    paint.color = Colors.white;
     board.takeTurn(this);
     return true;
   }
+
   @override
-  bool onHoverEnter(PointerHoverInfo info){
-    hoverIn = true;
-    if(owner==""&&board.winner=="") {
-      hoverEffect.resume();
-    }
-    return true;
-  }
-  @override
-  bool onHoverLeave(PointerHoverInfo info){
-    hoverIn = false;
-    if(owner==""&&board.winner=="") {
-      hoverEffect.resume();
+  bool onHoverEnter(PointerHoverInfo info) {
+    if (owner == "" && board.winner == "") {
+      hoverEffect.toggle();
     }
     return true;
   }
 
   @override
-  void render(Canvas canvas) async{
+  bool onHoverLeave(PointerHoverInfo info) {
+    if (owner == "" && board.winner == "") {
+      hoverEffect.toggle();
+    }
+    return true;
+  }
+
+  @override
+  void render(Canvas canvas) async {
     text.text = owner;
     textPaint = TextPaint(
         style: TextStyle(
             color: owner == "x" ? Colors.red : Colors.blue, fontSize: .07));
     text.textRenderer = textPaint;
-    if(!hoverEffect.isPaused && (hoverIn?(hoverEffect.controller.progress+.1>=1):(hoverEffect.controller.progress-.1<=0))){
+    if (!(owner == "" && board.winner == "")) {
+      hoverEffect.reset();
       hoverEffect.pause();
-      hoverEffect.apply(hoverIn?1:0);
     }
-    if(!(owner==""&&board.winner=="")){
-      if(hoverEffect.isMounted) {
-        hoverEffect.reset();
-        hoverEffect.pause();
-      }
-      paint.color = Colors.white;
-    }
-    canvas.drawRect(Rect.fromCenter(center: Offset(width/2, height/2), width: width, height: height), Paint()..color = Colors.black ..style = PaintingStyle.stroke ..strokeWidth = .002);
+    canvas.drawRect(
+        Rect.fromCenter(
+            center: Offset(width / 2, height / 2),
+            width: width,
+            height: height),
+        Paint()
+          ..color = Colors.black
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = .002);
     super.render(canvas);
   }
 }
