@@ -49,4 +49,4 @@ jobs:
           git config user.email github-actions@github.com
           git add .
           git commit -m "Automatic deployment by github-actions"
-          git push origin HEAD:.
+          git push origin
