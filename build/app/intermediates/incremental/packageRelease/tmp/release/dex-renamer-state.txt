@@ -1,4 +1,0 @@
-#Fri Apr 29 19:54:29 UTC 2022
-base.0=/home/runner/work/Flutter-Tic-Tac-Two/Flutter-Tic-Tac-Two/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
-renamed.0=classes.dex
-path.0=classes.dex
