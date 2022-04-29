@@ -1306,8 +1306,8 @@ androidx.core.graphics.TypefaceCompatBaseImpl
 androidx.core.view.ViewCompat$NestedScrollType
 androidx.core.telephony.TelephonyManagerCompat$Api23Impl
 kotlinx.coroutines.flow.FlowKt__DistinctKt$defaultKeySelector$1
-kotlinx.coroutines.flow.SharedFlowImpl$WhenMappings
 kotlinx.coroutines.AwaitAll$AwaitAllNode
+kotlinx.coroutines.flow.SharedFlowImpl$WhenMappings
 kotlinx.coroutines.flow.FlowKt__TransformKt$mapNotNull$$inlined$unsafeTransform$1$1
 kotlinx.coroutines.flow.FlowKt__ZipKt$combineUnsafe$1$1
 androidx.fragment.app.FragmentManagerImpl$1
@@ -6522,8 +6522,8 @@ kotlin.text.MatchResult$Destructured
 androidx.core.view.TintableBackgroundView
 androidx.core.app.NotificationChannelCompat
 androidx.core.app.ActivityCompat$RequestPermissionsRequestCodeValidator
-kotlinx.coroutines.test.TestCoroutineContext
 kotlinx.coroutines.Delay
+kotlinx.coroutines.test.TestCoroutineContext
 androidx.customview.widget.FocusStrategy$SequentialComparator
 androidx.core.view.accessibility.AccessibilityNodeProviderCompat$AccessibilityNodeProviderApi19
 kotlinx.coroutines.channels.ChannelIterator:
@@ -8506,5 +8506,5 @@ androidx.core.content.res.ResourcesCompat:
     private static final java.lang.ThreadLocal sTempTypedValue
     private static final java.util.WeakHashMap sColorStateCaches
     private static final java.lang.Object sColorStateCacheLock
-io.flutter.plugin.platform.PlatformView$-CC
 io.flutter.plugin.common.BinaryMessenger$-CC
+io.flutter.plugin.platform.PlatformView$-CC
